@@ -18,6 +18,7 @@ local clockText
 local countDownTimer
 local gameOver
 local lives = 3
+local youWin
 
 --create other local variables 
 local questionObject
@@ -142,6 +143,22 @@ local function AskQuestion()
  end 
 end
 
+local function YouWin( )
+    -- monitor points till they reach 5
+  if (numberOfPoints == 5) then
+    -- display the you win screen
+    youWin.isVisible = true
+
+    --make the the unneeded objets invisible
+    clockText.isVisible = false
+    pointsTextObject.isVisible = false
+    questionObject.isVisible = false
+    numericField.isVisible = false
+    --play youwin sound
+    youWinSoundChannel = audio.play(youWinSound)
+
+  end
+end
 
 local function HideCorrect()
  correctObject.isVisible = false
@@ -163,26 +180,41 @@ local function NumericFieldListener( event )
   userAnswer = tonumber(event.target.text)
   --if the user's answer and the correct answer and the correct answer are the same:
   if (userAnswer == correctAnswer) then
+      --correct object is vible when the answer is right
    		correctObject.isVisible = true 
+      --the correct sound channel plays when the answer is correct
    		correctSoundChannel = audio.play(correctSound)
-   		incorrectObject.isVisible = false
+      -- hides correct for two seconds after it is called 
    		timer.performWithDelay(2000,HideCorrect)
+      -- the number of points updates when the answer is right
    		numberOfPoints = numberOfPoints + 1
-   		event.target.text = ""
+   		-- you win function is called
+      YouWin()
+      -- the text field is cleared and reset
+      event.target.text = ""
+      -- amount of seconds is reset 
    		secondsLeft = totalSeconds
-        -- create increasing points in the text object
-  pointsTextObject.text = "Points = ".. numberOfPoints
+      -- create increasing points in the text object
+      pointsTextObject.text = "Points = ".. numberOfPoints
   elseif (userAnswer ~= correctAnswer) then
+      --the incorrect text shows up after you get a wrong answer
    		incorrectObject.isVisible = true
+      -- the wrong sound channel shows up after you get the answer wrong
    		wrongSoundChannel = audio.play(wrongSound)
+      -- your lives decrease when you get the answer wrong
    		lives = lives - 1
+      -- your lives are updated to show the amount you have left
    		UpdateHearts()
-   		correctObject.isVisible = false
+
+
       -- this tells you the correct answer when you are wrong
       incorrectObject.text = "The correct answer is " .. correctAnswer
-   		timer.performWithDelay(2000,HideIncorrect)
-   		event.target.text = ""
-   		secondsLeft = totalSeconds   
+   		-- this makes the timer have a delay
+      timer.performWithDelay(2000,HideIncorrect)
+   		-- clears the text feild and make a new one 
+      event.target.text = ""
+      -- resets the timer
+      secondsLeft = totalSeconds   
   end
  end
 end
@@ -208,16 +240,26 @@ gameOver = display.newImageRect("Images/gameOver.png", display.contentWidth, dis
 gameOver.anchorX = 0
 gameOver.anchorY = 0
 gameOver.isVisible = false
+
+--create and display game over on the screen
+youWin = display.newImageRect("Images/youWin.png", display.contentWidth, display.contentHeight)
+youWin.anchorX = 0
+youWin.anchorY = 0
+youWin.isVisible = false
+
 -- create points box and make it visible
 pointsTextObject = display.newText( "Points = ".. numberOfPoints, 800, 385, nil, 50 )
 pointsTextObject:setTextColor(24/255, 119/255, 25/255)
+
 -- display a question and sets the color 
 questionObject = display.newText("", display.contentWidth/3, display.contentHeight/2, nil, 80)
 questionObject:setTextColor(10/255, 10/255, 70/255)
+
 -- create the correct  text object and make it invisible
 correctObject = display.newText("Ayy Correct", display.contentWidth/2, 250, nil, 60)
 correctObject:setTextColor(10/255, 50/255, 226/255)
 correctObject.isVisible = false
+
 -- create the incorrect  text object and make it invisible
 incorrectObject = display.newText("Incorrect boii", display.contentWidth/2, 250, nil, 50)
 incorrectObject:setTextColor(4/255, 224/255, 19/255)
