@@ -26,9 +26,9 @@ local scene = composer.newScene( sceneName )
  
 -- The local variables for this scene
 local companyLogo
-local scrollXSpeed = 8
-local scrollYSpeed = -3
-local jungleSounds = audio.loadSound("Sounds/animals144.mp3")
+local scrollXSpeed = 4
+local scrollYSpeed = -2
+local jungleSounds = audio.loadSound("Sounds/Intro.mp3")
 local jungleSoundsChannel
 
 --------------------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ function scene:show( event )
         Runtime:addEventListener("enterFrame", moveCompanyLogo)
 
         -- Go to the main menu screen after the given time.
-        timer.performWithDelay ( 3000, gotoMainMenu)          
+        timer.performWithDelay ( 4000, gotoMainMenu)          
         
     end
 
